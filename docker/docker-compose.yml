@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  jupyter:
+    image: tool/jupyter
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - ../.env.local
+    volumes:
+      - ./home:/home
+    ports:
+      - 8000:8000
