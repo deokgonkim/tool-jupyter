@@ -8,6 +8,8 @@ echo "VPC ID : "; read VPC_ID; echo "export VPC_ID=${VPC_ID}" >> .env
 
 echo "PublicSubnet 1 : "; read PUBLIC_SUBNET1; echo "export PUBLIC_SUBNET1=${PUBLIC_SUBNET1}" >> .env
 echo "PublicSubnet 2 : "; read PUBLIC_SUBNET2; echo "export PUBLIC_SUBNET2=${PUBLIC_SUBNET2}" >> .env
+echo "PrivateSubnet 1 : "; read PRIVATE_SUBNET1; echo "export PRIVATE_SUBNET1=${PRIVATE_SUBNET1}" >> .env
+echo "PrivateSubnet 2 : "; read PRIVATE_SUBNET2; echo "export PRIVATE_SUBNET2=${PRIVATE_SUBNET2}" >> .env
 
 echo "Security Group VPC : "; read SECURITY_GROUP_VPC; echo "export SECURITY_GROUP_VPC=${SECURITY_GROUP_VPC}" >> .env
 echo "Security Group Developer : "; read SECURITY_GROUP_DEVELOPER; echo "export SECURITY_GROUP_DEVELOPER=${SECURITY_GROUP_DEVELOPER}" >> .env

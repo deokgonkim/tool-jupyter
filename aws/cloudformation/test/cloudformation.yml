@@ -31,6 +31,10 @@ Parameters:
     Type: String
   PublicSubnet2:
     Type: String
+  PrivateSubnet1:
+    Type: String
+  PrivateSubnet2:
+    Type: String
   SecurityGroupVpc:
     Type: String
   SecurityGroupDeveloper:
@@ -68,14 +72,14 @@ Resources:
     Type: AWS::EFS::MountTarget
     Properties: 
       FileSystemId: !Ref FileSystem
-      SubnetId: !Ref PublicSubnet1
+      SubnetId: !Ref PrivateSubnet1
       SecurityGroups:
         - !Ref SecurityGroupVpc # - vpc
   EFSMountTargetB:
     Type: AWS::EFS::MountTarget
     Properties: 
       FileSystemId: !Ref FileSystem
-      SubnetId: !Ref PublicSubnet2
+      SubnetId: !Ref PrivateSubnet2
       SecurityGroups:
         - !Ref SecurityGroupVpc # - vpc
   
@@ -204,10 +208,10 @@ Resources:
       NetworkConfiguration:
         AwsvpcConfiguration:
           # change to DISABLED if you're using private subnets that have access to a NAT gateway
-          AssignPublicIp: ENABLED
+          AssignPublicIp: DISABLED
           Subnets:
-            - !Ref PublicSubnet1
-            - !Ref PublicSubnet2
+            - !Ref PrivateSubnet1
+            - !Ref PrivateSubnet2
           SecurityGroups:
             - !Ref SecurityGroupVpc # - vpc
       LoadBalancers:
@@ -223,7 +227,7 @@ Resources:
       HealthCheckTimeoutSeconds: 60
       UnhealthyThresholdCount: 2
       HealthyThresholdCount: 2
-      Name: !Join ['', [!Ref ServiceName, -TargetGroup-1]]
+      # Name: !Join ['', [!Ref ServiceName, -TargetGroup-1]]
       Port: !Ref ContainerPort
       Protocol: HTTP
       TargetGroupAttributes:
@@ -242,7 +246,7 @@ Resources:
       HealthCheckTimeoutSeconds: 60
       UnhealthyThresholdCount: 2
       HealthyThresholdCount: 2
-      Name: !Join ['', [!Ref ServiceName, -TargetGroup-2]]
+      # Name: !Join ['', [!Ref ServiceName, -TargetGroup-2]]
       Port: !Ref ContainerPort
       Protocol: HTTP
       TargetGroupAttributes:
