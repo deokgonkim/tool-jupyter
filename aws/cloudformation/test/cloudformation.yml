@@ -25,6 +25,21 @@ Parameters:
     MinLength: '1'
     Default: jupyter-test-volume
   
+  VpcId:
+    Type: String
+  PublicSubnet1:
+    Type: String
+  PublicSubnet2:
+    Type: String
+  SecurityGroupVpc:
+    Type: String
+  SecurityGroupDeveloper:
+    Type: String
+  CertificateArn:
+    Type: String
+  HostedZoneName:
+    Type: String
+  
   # Environment variables
   AppName:
     Type: String
@@ -53,24 +68,17 @@ Resources:
     Type: AWS::EFS::MountTarget
     Properties: 
       FileSystemId: !Ref FileSystem
-      SubnetId: !ImportValue PrivateSubnetA
+      SubnetId: !Ref PublicSubnet1
       SecurityGroups:
-        - !ImportValue SecurityGroupVPC # - vpc
+        - !Ref SecurityGroupVpc # - vpc
   EFSMountTargetB:
     Type: AWS::EFS::MountTarget
     Properties: 
       FileSystemId: !Ref FileSystem
-      SubnetId: !ImportValue PrivateSubnetB
+      SubnetId: !Ref PublicSubnet2
       SecurityGroups:
-        - !ImportValue SecurityGroupVPC # - vpc
-  EFSMountTargetC:
-    Type: AWS::EFS::MountTarget
-    Properties: 
-      FileSystemId: !Ref FileSystem
-      SubnetId: !ImportValue PrivateSubnetC
-      SecurityGroups:
-        - !ImportValue SecurityGroupVPC # - vpc
-
+        - !Ref SecurityGroupVpc # - vpc
+  
   Cluster:
     Type: AWS::ECS::Cluster
     Properties:
@@ -91,13 +99,13 @@ Resources:
       # 1024 (1 vCPU) - Available memory values: 2GB, 3GB, 4GB, 5GB, 6GB, 7GB, 8GB
       # 2048 (2 vCPU) - Available memory values: Between 4GB and 16GB in 1GB increments
       # 4096 (4 vCPU) - Available memory values: Between 8GB and 30GB in 1GB increments
-      Cpu: 512
+      Cpu: 1024
       # 0.5GB, 1GB, 2GB - Available cpu values: 256 (.25 vCPU)
       # 1GB, 2GB, 3GB, 4GB - Available cpu values: 512 (.5 vCPU)
       # 2GB, 3GB, 4GB, 5GB, 6GB, 7GB, 8GB - Available cpu values: 1024 (1 vCPU)
       # Between 4GB and 16GB in 1GB increments - Available cpu values: 2048 (2 vCPU)
       # Between 8GB and 30GB in 1GB increments - Available cpu values: 4096 (4 vCPU)
-      Memory: 2GB
+      Memory: 4GB
       # A role needed by ECS.
       # "The ARN of the task execution role that containers in this task can assume. All containers in this task are granted the permissions that are specified in this role."
       # "There is an optional task execution IAM role that you can specify with Fargate to allow your Fargate tasks to make API calls to Amazon ECR."
@@ -166,7 +174,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: !Join ['', [!Ref ServiceName, -ContainerSecurityGroup]]
-      VpcId: !ImportValue VpcId
+      VpcId: !Ref VpcId
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: !Ref ContainerPort
@@ -196,13 +204,12 @@ Resources:
       NetworkConfiguration:
         AwsvpcConfiguration:
           # change to DISABLED if you're using private subnets that have access to a NAT gateway
-          AssignPublicIp: DISABLED
+          AssignPublicIp: ENABLED
           Subnets:
-            - !ImportValue PrivateSubnetA
-            - !ImportValue PrivateSubnetB
-            - !ImportValue PrivateSubnetC
+            - !Ref PublicSubnet1
+            - !Ref PublicSubnet2
           SecurityGroups:
-            - !ImportValue SecurityGroupVPC # - vpc
+            - !Ref SecurityGroupVpc # - vpc
       LoadBalancers:
         - ContainerName: !Ref ServiceName
           ContainerPort: !Ref ContainerPort
@@ -225,7 +232,7 @@ Resources:
         - Key: deregistration_delay.timeout_seconds
           Value: 10 # default is 300
       TargetType: ip
-      VpcId: !ImportValue VpcId
+      VpcId: !Ref VpcId
   TargetGroup2:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
@@ -244,7 +251,7 @@ Resources:
         - Key: deregistration_delay.timeout_seconds
           Value: 10 # default is 300
       TargetType: ip
-      VpcId: !ImportValue VpcId
+      VpcId: !Ref VpcId
   ListenerHTTPS:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -255,7 +262,7 @@ Resources:
       Port: !Ref LoadBalancerPort
       Protocol: HTTPS
       Certificates:
-        - CertificateArn: !ImportValue CertificateArn
+        - CertificateArn: !Ref CertificateArn
   LoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
@@ -268,17 +275,16 @@ Resources:
       Scheme: internet-facing
       SecurityGroups:
         # - !Ref LoadbalancerSecurityGroup
-        - !ImportValue SecurityGroupVPC
-        - !ImportValue SecurityGroupDevelopment
+        - !Ref SecurityGroupVpc
+        - !Ref SecurityGroupDeveloper
       Subnets:
-        - !ImportValue PublicSubnetA
-        - !ImportValue PublicSubnetB
-        - !ImportValue PublicSubnetC
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
   DNSRecord:
     Type: AWS::Route53::RecordSet
     Properties:
-      HostedZoneName: !Join ['', [!ImportValue HostedZoneName, .]]
-      Name: !Join ['', [!Ref Subdomain, ., !ImportValue HostedZoneName, .]]
+      HostedZoneName: !Join ['', [!Ref HostedZoneName, .]]
+      Name: !Join ['', [!Ref Subdomain, ., !Ref HostedZoneName, .]]
       Type: A
       AliasTarget:
         DNSName: !GetAtt LoadBalancer.DNSName

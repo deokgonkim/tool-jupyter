@@ -16,4 +16,11 @@ deploy \
 --parameter-overrides \
 "LdapHost=$LDAP_HOST" \
 "LdapPort=$LDAP_PORT" \
-"LdapDnTemplate=$LDAP_DN_TEMPLATE"
+"LdapDnTemplate=$LDAP_DN_TEMPLATE" \
+"VpcId=$VPC_ID" \
+"PublicSubnet1=$PUBLIC_SUBNET1" \
+"PublicSubnet2=$PUBLIC_SUBNET2" \
+"SecurityGroupVpc=$SECURITY_GROUP_VPC" \
+"SecurityGroupDeveloper=$SECURITY_GROUP_DEVELOPER" \
+"CertificateArn=$CERTIFICATE_ARN" \
+"HostedZoneName=$HOSTED_ZONE_NAME"
