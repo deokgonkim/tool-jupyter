@@ -3,6 +3,8 @@
 # install required pip libraries
 # pip install -i https://pip.deokgon.kim/dgkim/stable dgkim-common
 
+# use skel directory to share folder
+(cd /etc/skel; ln -s ../shared/ ./)
 
 # Verify configuration
 VARS='$LDAP_HOST:$LDAP_PORT:$LDAP_DN_TEMPLATE'

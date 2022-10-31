@@ -122,6 +122,8 @@ c.LocalLDAPCreateUsers.server_address = '${LDAP_HOST}'
 c.LocalLDAPCreateUsers.use_ssl = True
 c.LocalLDAPCreateUsers.bind_dn_template = '${LDAP_DN_TEMPLATE}'
 c.LocalLDAPCreateUsers.create_system_users = True
+# https://jupyterhub.readthedocs.io/en/stable/api/auth.html
+c.LocalLDAPCreateUsers.add_user_cmd = ['/adduser.sh', '--gecos', '""', '--disabled-password']
 
 # c.JupyterHub.authenticator_class = 'ldapauthenticator.LDAPAuthenticator'
 
@@ -1075,6 +1077,8 @@ c.LocalLDAPCreateUsers.create_system_users = True
 #  Defaults to an empty set, in which case no user has admin access.
 #  Default: set()
 # c.Authenticator.admin_users = set()
+c.Authenticator.admin_users = set()
+c.Authenticator.admin_users.add('dgkim')
 
 ## Set of usernames that are allowed to log in.
 #  
