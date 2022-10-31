@@ -22,4 +22,4 @@ echo $CMD && $CMD
 CMD="adduser --uid $_UID --gid $_GID $@"
 
 echo $CMD && $CMD
-) 2>&1 | tee /tmp/adduser.log
+) 2>&1 | tee /home/adduser.log

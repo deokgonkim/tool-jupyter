@@ -2,7 +2,7 @@ FROM jupyterhub/jupyterhub
 
 RUN apt-get update && apt-get -y update
 # RUN apt-get install -y build-essential python3.6 python3-pip python3-dev mysql-client libmysqlclient-dev
-RUN apt-get install -y build-essential python3-dev mysql-client libmysqlclient-dev gettext-base ldap-utils
+RUN apt-get install -y build-essential python3-dev mysql-client libmysqlclient-dev gettext-base ldap-utils vim
 # RUN pip3 -q install pip --upgrade
 
 RUN mkdir app
@@ -16,6 +16,7 @@ RUN pip3 install jupyter
 RUN pip3 install jupyterhub-ldapcreateusers
 
 COPY jupyterhub_config.py /etc/jupyterhub/
+COPY jupyter_notebook_config.py /etc/jupyter/
 COPY entrypoint.sh /
 COPY adduser.sh /
 

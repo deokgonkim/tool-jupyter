@@ -873,6 +873,7 @@ c.LocalLDAPCreateUsers.add_user_cmd = ['/adduser.sh', '--gecos', '""', '--disabl
 #      such as JUPYTERHUB_API_URL.
 #  Default: {}
 # c.Spawner.environment = {}
+c.Spawner.environment = {'NB_UMASK': '0002'}
 
 ## Timeout (in seconds) before giving up on a spawned HTTP server
 #  
